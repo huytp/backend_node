@@ -27,6 +27,17 @@ module Nodes
         node.update!(node_api_url: params[:node_api_url])
       end
 
+      # Cập nhật WireGuard keys nếu có (từ vpn-node)
+      if params[:wireguard].present?
+        wireguard_data = params[:wireguard]
+        node.update!(
+          wireguard_private_key: wireguard_data[:private_key],
+          wireguard_public_key: wireguard_data[:public_key],
+          wireguard_listen_port: wireguard_data[:listen_port],
+          wireguard_endpoint: wireguard_data[:endpoint]
+        )
+      end
+
       # Gửi metrics đến AI Routing Engine
       send_to_ai_routing(node, heartbeat_data)
 

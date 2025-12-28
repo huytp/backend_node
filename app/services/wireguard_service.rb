@@ -2,7 +2,9 @@ require 'open3'
 
 class WireguardService
   class << self
-    # Generate WireGuard key pair
+    # Generate WireGuard key pair cho CLIENT (user)
+    # LƯU Ý: Server keys (của vpn-node) phải được generate trên vpn-node và gửi lên backend qua heartbeat
+    # Method này chỉ dùng để generate keys cho client khi tạo VPN connection
     def generate_key_pair
       private_key, status1 = Open3.capture2('wg', 'genkey')
       raise 'Failed to generate private key' unless status1.success?

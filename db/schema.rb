@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 8) do
+ActiveRecord::Schema[7.1].define(version: 9) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -55,6 +55,7 @@ ActiveRecord::Schema[7.1].define(version: 8) do
     t.string "wireguard_endpoint"
     t.integer "wireguard_listen_port"
     t.string "node_api_url"
+    t.string "wireguard_private_key"
     t.index ["address"], name: "index_nodes_on_address", unique: true
   end
 

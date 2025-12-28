@@ -1,0 +1,13 @@
+#!/usr/bin/env ruby
+# This script loads the Rails console
+
+require_relative '../config/environment'
+
+# Start the console
+if defined?(Pry)
+  Pry.start
+else
+  require 'irb'
+  IRB.start
+end
+

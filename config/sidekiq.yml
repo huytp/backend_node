@@ -1,0 +1,23 @@
+concurrency: 10
+
+pidfile: ./tmp/pids/sidekiq.pid
+
+logfile: ./log/sidekiq.log
+
+queues:
+  - default
+
+schedule:
+  # Epoch Job - Chạy mỗi 1 phút để tạo và quản lý epochs
+  epoch_job:
+    class: EpochJob
+    every: '1m'
+    queue: default
+    description: "Tạo và quản lý epochs mỗi 1 phút"
+
+  # Settlement Job - Chạy mỗi 5 phút để settle epochs đã kết thúc
+  settlement_job:
+    class: SettlementJob
+    every: '5m'
+    queue: default
+    description: "Settle epochs đã kết thúc mỗi 5 phút"

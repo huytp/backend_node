@@ -34,5 +34,6 @@ Rails.application.routes.draw do
 
   # Health check
   get 'health', to: 'health#check'
+  post 'health/upload_test', to: 'health#upload_test'
 end
 

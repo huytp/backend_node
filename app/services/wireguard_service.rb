@@ -1,19 +1,37 @@
 require 'open3'
+require 'base64'
 
 class WireguardService
   class << self
     # Generate WireGuard key pair cho CLIENT (user)
     # LƯU Ý: Server keys (của vpn-node) phải được generate trên vpn-node và gửi lên backend qua heartbeat
     # Method này chỉ dùng để generate keys cho client khi tạo VPN connection
+    # YÊU CẦU: WireGuard phải được cài đặt trên server (wg command phải có sẵn)
     def generate_key_pair
       private_key, status1 = Open3.capture2('wg', 'genkey')
-      raise 'Failed to generate private key' unless status1.success?
+      unless status1.success?
+        error_msg = "Failed to generate WireGuard private key. Make sure WireGuard is installed: 'wg' command not found."
+        Rails.logger.error(error_msg)
+        raise error_msg
+      end
 
       private_key = private_key.strip
       public_key, status2 = Open3.capture2('sh', '-c', "echo '#{private_key}' | wg pubkey")
-      raise 'Failed to generate public key' unless status2.success?
+      unless status2.success?
+        error_msg = "Failed to generate WireGuard public key. Make sure WireGuard is installed: 'wg pubkey' command failed."
+        Rails.logger.error(error_msg)
+        raise error_msg
+      end
 
       [private_key.strip, public_key.strip]
+    rescue Errno::ENOENT => e
+      error_msg = "WireGuard is not installed. Please install WireGuard tools:\n" \
+                  "  Ubuntu/Debian: sudo apt-get install wireguard-tools\n" \
+                  "  macOS: brew install wireguard-tools\n" \
+                  "  CentOS/RHEL: sudo yum install wireguard-tools\n" \
+                  "Error: #{e.message}"
+      Rails.logger.error(error_msg)
+      raise error_msg
     end
 
     # Tạo WireGuard config cho client

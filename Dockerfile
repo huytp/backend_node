@@ -6,6 +6,7 @@ RUN apt-get update -qq && apt-get install -y \
   libpq-dev \
   nodejs \
   postgresql-client \
+  wireguard-tools \
   && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app

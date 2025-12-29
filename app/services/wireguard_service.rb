@@ -42,7 +42,7 @@ class WireguardService
         [Interface]
         Address = #{client_address}
         PrivateKey = #{private_key}
-        DNS = 1.1.1.1
+        DNS = 8.8.8.8
 
         [Peer]
         PublicKey = #{server_public_key}

@@ -280,12 +280,21 @@ module Vpn
       # Generate client key pair
       client_private_key, client_public_key = WireguardService.generate_key_pair
 
+      # Generate client address (format: 10.0.0.X/24)
+      client_address = WireguardService.generate_client_address
+
       # Tạo WireGuard config cho client
       client_config = WireguardService.create_client_config(
         private_key: client_private_key,
         server_public_key: wg_info[:public_key],
-        server_endpoint: wg_info[:endpoint]
+        server_endpoint: wg_info[:endpoint],
+        client_address: client_address
       )
+
+      # Extract IP từ client_address và chuyển sang format /32 cho AllowedIPs
+      # client_address format: 10.0.0.X/24 -> cần 10.0.0.X/32
+      client_ip = client_address.split('/').first
+      allowed_ips = "#{client_ip}/32"
 
       # Thêm peer vào entry node (nếu có API URL)
       if node_api_url
@@ -293,7 +302,7 @@ module Vpn
           WireguardService.add_peer_to_node(
             node_api_url,
             client_public_key,
-            '0.0.0.0/0',
+            allowed_ips,
             connection.connection_id
           )
           Rails.logger.info("Successfully added peer to node: #{entry_node.address}")

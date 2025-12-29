@@ -211,8 +211,7 @@ class WireguardService
       end
     end
 
-    private
-
+    # Generate client address cho WireGuard interface
     def generate_client_address
       # Generate random IP trong range 10.0.0.0/24
       # Tránh conflict với server IPs (thường là 10.0.0.1-10.0.0.10)

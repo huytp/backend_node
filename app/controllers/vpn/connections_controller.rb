@@ -48,10 +48,13 @@ module Vpn
 
       # Tạo WireGuard config cho mobile app
       wireguard_config = nil
+      wireguard_error = nil
       begin
         wireguard_config = create_wireguard_config(connection, entry_node)
       rescue => e
         Rails.logger.error("Failed to create WireGuard config: #{e.message}")
+        Rails.logger.error("Backtrace: #{e.backtrace.first(5).join("\n")}")
+        wireguard_error = e.message
         # Vẫn trả về connection info nếu WireGuard config fail
       end
 
@@ -67,6 +70,10 @@ module Vpn
       if wireguard_config
         response_data[:wireguard_config] = wireguard_config[:config]
         response_data[:client_private_key] = wireguard_config[:client_private_key]
+      else
+        # Thêm error message để client biết tại sao không có config
+        response_data[:wireguard_error] = wireguard_error || 'WireGuard config creation failed'
+        Rails.logger.warn("VPN connection created but WireGuard config unavailable: #{response_data[:wireguard_error]}")
       end
 
       render json: response_data

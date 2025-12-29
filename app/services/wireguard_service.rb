@@ -18,13 +18,13 @@ class WireguardService
 
     # Tạo WireGuard config cho client
     def create_client_config(private_key:, server_public_key:, server_endpoint:, allowed_ips: '0.0.0.0/0', client_address: nil)
-      # Generate client address nếu chưa có
       client_address ||= generate_client_address
 
       config = <<~CONFIG
         [Interface]
-        PrivateKey = #{private_key}
         Address = #{client_address}
+        PrivateKey = #{private_key}
+        DNS = 8.8.8.8
 
         [Peer]
         PublicKey = #{server_public_key}

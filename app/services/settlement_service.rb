@@ -11,6 +11,17 @@ class SettlementService
       # Tính rewards - CHỈ tính cho các traffic records đủ điều kiện
       rewards_data = epoch.calculate_rewards_with_eligibility
 
+      # Kiểm tra nếu không có rewards nào
+      if rewards_data.empty?
+        Rails.logger.info("No eligible rewards for epoch #{epoch_id}")
+        epoch.update!(
+          status: :committed,
+          total_traffic: 0,
+          node_count: 0
+        )
+        return true
+      end
+
       # Build Merkle tree
       leaves_data = rewards_data.map do |reward|
         {
@@ -20,6 +31,13 @@ class SettlementService
       end
 
       merkle_root = MerkleTreeService.build_tree(leaves_data)
+
+      # Kiểm tra merkle_root không nil
+      if merkle_root.nil?
+        Rails.logger.error("Failed to build merkle tree for epoch #{epoch_id}")
+        epoch.update!(status: :pending)
+        return false
+      end
 
       # Generate leaves hashes for proof
       leaves_hashes = leaves_data.map do |leaf|

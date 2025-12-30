@@ -41,6 +41,7 @@ class MerkleTreeService
   private
 
   def self.build_merkle_tree(leaves)
+    return nil if leaves.empty?
     return leaves.first if leaves.length == 1
 
     next_level = build_next_level(leaves)

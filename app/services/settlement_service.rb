@@ -111,6 +111,7 @@ class SettlementService
       function_data = "#{function_selector}#{encoded_epoch}#{encoded_root}"
 
       # Get transaction parameters
+      # Rate limiter will handle spacing between these calls
       nonce_hex = rpc.eth_get_transaction_count(key.address.to_s, 'latest')
       nonce = rpc.hex_to_int(nonce_hex)
 
@@ -189,6 +190,7 @@ class SettlementService
   def self.wait_for_receipt(rpc, tx_hash, max_wait = 60)
     start_time = Time.now
     while Time.now - start_time < max_wait
+      # Wait 2 seconds between receipt checks (rate limiter will handle spacing)
       sleep 2
       receipt = rpc.eth_get_transaction_receipt(tx_hash)
       return receipt if receipt && receipt['blockNumber']

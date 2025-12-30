@@ -21,6 +21,10 @@ class SettlementJob < ApplicationJob
       else
         Rails.logger.error("❌ Failed to settle epoch #{epoch.epoch_id}")
       end
+
+      # Add delay between epochs to avoid overwhelming the RPC provider
+      # This gives the rate limiter time to reset between epochs
+      sleep(1) if epochs_to_settle.count > 1
     end
   end
 end

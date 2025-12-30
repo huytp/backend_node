@@ -7,7 +7,7 @@ class TrafficRecord < ApplicationRecord
   validates :epoch_id, presence: true
 
   after_create :check_ai_scoring_and_eligibility
-  after_create :update_epoch_total_traffic
+  after_commit :update_epoch_total_traffic, on: :create
 
   private
 
@@ -88,8 +88,9 @@ class TrafficRecord < ApplicationRecord
       return unless epoch
       return if epoch.committed?
 
-      # Tính lại total_traffic từ tất cả traffic_records trong epoch
-      new_total = epoch.traffic_records.sum(:traffic_mb)
+      # Tính lại total_traffic CHỈ từ các traffic_records đủ điều kiện reward
+      # Để nhất quán với logic settlement (chỉ tính eligible records)
+      new_total = epoch.traffic_records.where(reward_eligible: true).sum(:traffic_mb)
 
       # Cập nhật bằng update_column để tránh trigger callbacks khác
       epoch.update_column(:total_traffic, new_total)

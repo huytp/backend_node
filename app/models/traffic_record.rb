@@ -7,6 +7,7 @@ class TrafficRecord < ApplicationRecord
   validates :epoch_id, presence: true
 
   after_create :check_ai_scoring_and_eligibility
+  after_create :update_epoch_total_traffic
 
   private
 
@@ -76,6 +77,25 @@ class TrafficRecord < ApplicationRecord
       end
     rescue => e
       Rails.logger.error("Failed to check reward eligibility for traffic record #{id}: #{e.message}")
+    end
+  end
+
+  def update_epoch_total_traffic
+    # Chỉ cập nhật total_traffic nếu epoch đang pending/processing (chưa committed)
+    # Epoch đã committed sẽ giữ nguyên giá trị đã settle
+    begin
+      epoch = Epoch.find_by(epoch_id: epoch_id)
+      return unless epoch
+      return if epoch.committed?
+
+      # Tính lại total_traffic từ tất cả traffic_records trong epoch
+      new_total = epoch.traffic_records.sum(:traffic_mb)
+
+      # Cập nhật bằng update_column để tránh trigger callbacks khác
+      epoch.update_column(:total_traffic, new_total)
+    rescue => e
+      Rails.logger.error("Failed to update epoch total_traffic for record #{id}: #{e.message}")
+      # Không throw error để không ảnh hưởng đến việc tạo traffic record
     end
   end
 end

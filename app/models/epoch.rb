@@ -16,6 +16,24 @@ class Epoch < ApplicationRecord
     status == 'committed'
   end
 
+  # Tính total_traffic động từ traffic_records
+  # Nếu epoch đã committed, trả về giá trị đã lưu
+  # Nếu epoch đang pending/processing, tính toán từ traffic_records
+  def calculated_total_traffic
+    if committed?
+      # Epoch đã committed, trả về giá trị đã được settle
+      total_traffic
+    else
+      # Epoch đang pending/processing, tính toán từ traffic_records
+      traffic_records.sum(:traffic_mb)
+    end
+  end
+
+  # Tính total_traffic chỉ cho các records đủ điều kiện reward
+  def calculated_eligible_traffic
+    traffic_records.where(reward_eligible: true).sum(:traffic_mb)
+  end
+
   def calculate_rewards
     # Áp dụng công thức: reward = trafficMB × quality × reputation
     rewards_data = []

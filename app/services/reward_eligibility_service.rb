@@ -19,12 +19,6 @@ class RewardEligibilityService
       return { eligible: false, reason: 'Traffic bất thường được phát hiện' }
     end
 
-    # 3. KHÔNG được request nếu chưa qua AI scoring
-    ai_score_result = check_ai_scoring(node)
-    unless ai_score_result[:scored]
-      return { eligible: false, reason: 'Chưa qua AI scoring' }
-    end
-
     # 4. ĐƯỢC request khi kết thúc VPN session
     if request_source == :session_end
       return { eligible: true, reason: 'Kết thúc VPN session' }

@@ -94,7 +94,7 @@ class Epoch < ApplicationRecord
       reputation = (node.reputation_score || 50) / 100.0
 
       # Reward tính bằng token (wei equivalent, 1 token = 10^18 wei)
-      reward_amount = (total_traffic * quality * reputation * 10).to_i
+      reward_amount = (total_traffic * quality * reputation * 1000).to_i
 
       rewards_data << {
         node: node,

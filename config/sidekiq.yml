@@ -18,6 +18,6 @@ schedule:
   # Settlement Job - Chạy mỗi 5 phút để settle epochs đã kết thúc
   settlement_job:
     class: SettlementJob
-    every: '5m'
+    every: '2m'
     queue: default
     description: "Settle epochs đã kết thúc mỗi 5 phút"

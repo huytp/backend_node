@@ -48,8 +48,18 @@ class SettlementService
       end
 
       # Lưu rewards với merkle proof - CHỈ cho các node đủ điều kiện
+      Rails.logger.info("Generating proofs for #{leaves_data.length} nodes in epoch #{epoch_id}")
+
       leaves_data.each_with_index do |leaf, index|
         proof = MerkleTreeService.generate_proof(leaves_hashes, index)
+
+        node_address = leaf[:node].is_a?(Node) ? leaf[:node].address : leaf[:node]
+        Rails.logger.info("Node #{node_address}: proof length = #{proof.length}, amount = #{leaf[:amount]}")
+
+        # Log warning if proof is empty but there are multiple nodes
+        if proof.empty? && leaves_data.length > 1
+          Rails.logger.warn("⚠️  Empty proof for node #{node_address} in epoch #{epoch_id} with #{leaves_data.length} nodes!")
+        end
 
         Reward.create!(
           node: leaf[:node],

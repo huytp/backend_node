@@ -59,6 +59,15 @@ module Rewards
       begin
         proof_array = JSON.parse(reward.merkle_proof)
 
+        # Log for debugging
+        Rails.logger.info("Proof request: epoch=#{epoch_id}, node=#{node_address}, proof_length=#{proof_array.length}")
+
+        # If proof is empty, log additional context
+        if proof_array.empty?
+          total_rewards = Reward.where(epoch: epoch).count
+          Rails.logger.warn("⚠️  Empty proof for epoch #{epoch_id}, node #{node_address}. Total rewards in epoch: #{total_rewards}")
+        end
+
         render json: {
           epoch: epoch_id.to_i,
           node: node_address,
@@ -67,6 +76,7 @@ module Rewards
           merkle_root: epoch.merkle_root
         }
       rescue JSON::ParserError => e
+        Rails.logger.error("Invalid merkle proof format for epoch #{epoch_id}, node #{node_address}: #{e.message}")
         render json: { error: 'Invalid merkle proof format' }, status: :internal_server_error
       end
     end

@@ -1,5 +1,4 @@
-require 'digest'
-require 'keccak'
+require 'digest/keccak'
 
 class MerkleTreeService
   def self.build_tree(rewards_data)
@@ -72,9 +71,8 @@ class MerkleTreeService
     packed = address_bytes + amount_bytes
 
     # keccak256 hash (Ethereum uses keccak256, not SHA3-256)
-    # Note: Keccak::Digest.new(:sha3_256) is actually keccak256 in Ruby
-    hash = Keccak::Digest.new(:sha3_256).update(packed).digest
-    hash.unpack('H*').first
+    # Using Digest::Keccak for 256-bit hash
+    Digest::Keccak.hexdigest(packed, 256)
   end
 
   private
@@ -105,14 +103,14 @@ class MerkleTreeService
           packed = right + left
         end
 
-        hash = Keccak::Digest.new(:sha3_256).update(packed).digest
-        level << hash.unpack('H*').first
+        hash = Digest::Keccak.hexdigest(packed, 256)
+        level << hash
       else
         # Odd number, duplicate last
         leaf_bytes = [leaves[i]].pack('H*')
         packed = leaf_bytes + leaf_bytes
-        hash = Keccak::Digest.new(:sha3_256).update(packed).digest
-        level << hash.unpack('H*').first
+        hash = Digest::Keccak.hexdigest(packed, 256)
+        level << hash
       end
       i += 2
     end

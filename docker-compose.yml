@@ -5,6 +5,8 @@ services:
     build: .
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       - RAILS_ENV=development
       - AI_ROUTING_URL=http://34.55.194.244:8000
@@ -12,6 +14,10 @@ services:
       - POSTGRES_HOST=db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - SETTLEMENT_PRIVATE_KEY=${SETTLEMENT_PRIVATE_KEY}
+      - REWARD_CONTRACT_ADDRESS=${REWARD_CONTRACT_ADDRESS}
+      - TATUM_POLYGON_AMOY_URL=${TATUM_POLYGON_AMOY_URL}
+      - TATUM_API_KEY=${TATUM_API_KEY}
     volumes:
       - .:/app
     depends_on:
@@ -21,12 +27,18 @@ services:
   sidekiq:
     build: .
     command: bundle exec sidekiq
+    env_file:
+      - .env
     environment:
       - RAILS_ENV=development
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_HOST=db
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+      - SETTLEMENT_PRIVATE_KEY=${SETTLEMENT_PRIVATE_KEY}
+      - REWARD_CONTRACT_ADDRESS=${REWARD_CONTRACT_ADDRESS}
+      - TATUM_POLYGON_AMOY_URL=${TATUM_POLYGON_AMOY_URL}
+      - TATUM_API_KEY=${TATUM_API_KEY}
     volumes:
       - .:/app
     depends_on:

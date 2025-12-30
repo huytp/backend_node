@@ -41,10 +41,10 @@ class SettlementService
         return false
       end
 
-      # Generate leaves hashes for proof
-      leaves_hashes = leaves_data.map do |leaf|
-        node_address = leaf[:node].is_a?(Node) ? leaf[:node].address : leaf[:node]
-        Digest::SHA256.hexdigest("#{node_address}#{leaf[:amount]}")
+      # Generate leaves hashes for proof (must match contract format)
+      leaves_hashes = leaves_data.map do |reward|
+        node_address = reward[:node].is_a?(Node) ? reward[:node].address : reward[:node]
+        MerkleTreeService.hash_leaf(node_address, reward[:amount])
       end
 
       # Lưu rewards với merkle proof - CHỈ cho các node đủ điều kiện
@@ -81,7 +81,13 @@ class SettlementService
   private
 
   def self.commit_to_blockchain(epoch_id, merkle_root)
-    return unless ENV['REWARD_CONTRACT_ADDRESS'] && ENV['SETTLEMENT_PRIVATE_KEY']
+    # Support both naming conventions:
+    # - SETTLEMENT_PRIVATE_KEY (backend specific) or PRIVATE_KEY (from blockchain/.env)
+    # - REWARD_CONTRACT_ADDRESS (backend specific) or REWARD_ADDRESS (from blockchain/.env)
+    private_key = ENV['SETTLEMENT_PRIVATE_KEY']
+    contract_address = ENV['REWARD_CONTRACT_ADDRESS']
+
+    return unless contract_address && private_key
 
     Rails.logger.info("Committing epoch #{epoch_id} with root #{merkle_root} to blockchain")
 
@@ -90,10 +96,8 @@ class SettlementService
       rpc = RpcClientService.new
 
       # Initialize signer
-      private_key = ENV['SETTLEMENT_PRIVATE_KEY']
       private_key = private_key[2..-1] if private_key.start_with?('0x')
       key = Eth::Key.new(priv: private_key)
-      contract_address = ENV['REWARD_CONTRACT_ADDRESS']
 
       # Function selector for commitEpoch(uint256,bytes32)
       # Calculated: keccak256("commitEpoch(uint256,bytes32)")[0:4] = 0x...

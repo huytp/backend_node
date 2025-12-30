@@ -18,6 +18,7 @@ gem 'active_model_serializers'
 
 # Blockchain
 gem 'eth', '~> 0.5.0'
+gem 'keccak', '~> 1.3'
 
 # HTTP Client
 gem 'httparty'

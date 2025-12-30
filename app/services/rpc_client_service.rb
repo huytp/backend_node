@@ -7,7 +7,7 @@ class RpcClientService
   DEFAULT_GAS_LIMIT = 200_000
 
   def initialize(rpc_url = nil, api_key = nil)
-    @rpc_url = rpc_url || ENV['RPC_URL'] || ENV['TATUM_POLYGON_AMOY_URL']
+    @rpc_url = rpc_url || ENV['TATUM_POLYGON_AMOY_URL']
     @api_key = api_key || ENV['TATUM_API_KEY']
     @request_id = 0
   end

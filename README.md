@@ -61,7 +61,18 @@ Copy `.env.example` to `.env` và cấu hình:
 
 - `AI_ROUTING_URL`: URL của AI Routing Engine
 - `REDIS_URL`: Redis connection cho Sidekiq
-- Blockchain contract addresses
+- `SETTLEMENT_PRIVATE_KEY`: Private key để sign settlement transactions (xem [SETTLEMENT_SETUP.md](SETTLEMENT_SETUP.md))
+- `REWARD_CONTRACT_ADDRESS`: Địa chỉ Reward contract
+- `RPC_URL` hoặc `TATUM_POLYGON_AMOY_URL`: RPC endpoint
+- `TATUM_API_KEY`: API key cho Tatum (nếu dùng)
+
+### Tạo SETTLEMENT_PRIVATE_KEY
+
+```bash
+ruby scripts/generate_settlement_key.rb
+```
+
+Xem chi tiết trong [SETTLEMENT_SETUP.md](SETTLEMENT_SETUP.md)
 
 ## Background Jobs
 

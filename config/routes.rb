@@ -30,8 +30,6 @@ Rails.application.routes.draw do
     get 'current_epoch', to: 'rewards#current_epoch'
     get 'verify/:epoch_id', to: 'rewards#verify'
     get 'eligibility/:traffic_record_id', to: 'rewards#check_eligibility'
-    post 'update_claimed', to: 'rewards#update_claimed'
-    get 'unclaimed', to: 'rewards#unclaimed'
   end
 
   # Health check

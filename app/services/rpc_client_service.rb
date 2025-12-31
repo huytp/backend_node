@@ -100,6 +100,17 @@ class RpcClientService
     call('eth_chainId')
   end
 
+  def eth_call(to, data, block = 'latest')
+    call('eth_call', [{
+      to: to,
+      data: data
+    }, block])
+  end
+
+  def eth_get_balance(address, block = 'latest')
+    call('eth_getBalance', [address, block])
+  end
+
   def hex_to_int(hex_string)
     hex_string.to_i(16)
   end

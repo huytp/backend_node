@@ -21,5 +21,15 @@ class User < ApplicationRecord
     generate_token
     save
   end
+
+  def subscription_active?
+    subscription_status == 'active' &&
+    subscription_expires_at.present? &&
+    subscription_expires_at > Time.current
+  end
+
+  def subscription_expired?
+    !subscription_active?
+  end
 end
 

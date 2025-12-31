@@ -38,6 +38,11 @@ Rails.application.routes.draw do
     get 'eligibility/:traffic_record_id', to: 'rewards#check_eligibility'
   end
 
+  # Subscription endpoints
+  get 'subscriptions/status', to: 'subscriptions#status'
+  get 'subscriptions/plans', to: 'subscriptions#plans'
+  post 'subscriptions/purchase', to: 'subscriptions#purchase'
+
   # Health check
   get 'health', to: 'health#check'
   post 'health/upload_test', to: 'health#upload_test'

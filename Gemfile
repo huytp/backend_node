@@ -10,6 +10,7 @@ gem 'bootsnap', '>= 1.4.4', require: false
 
 # Database
 gem 'pg', '~> 1.5'
+gem 'bcrypt', '~> 3.1.7'
 
 # API
 gem 'rack-cors'

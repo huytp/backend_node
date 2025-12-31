@@ -1,5 +1,6 @@
 module Vpn
   class ConnectionsController < ApplicationController
+    skip_before_action :authenticate_user, only: [:status, :active]
     # POST /vpn/connect
     def connect
       user_address = request.remote_ip

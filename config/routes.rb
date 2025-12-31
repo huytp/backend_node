@@ -5,8 +5,14 @@ Rails.application.routes.draw do
 
   # API Gateway routes
 
+  # Auth endpoints
+  post 'auth/register', to: 'auth#register'
+  post 'auth/login', to: 'auth#login'
+  get 'auth/me', to: 'auth#me'
+  post 'auth/logout', to: 'auth#logout'
+
   # Node endpoints
-  scope :auth, as: :auth do
+  namespace :nodes do
     post 'heartbeat', to: 'nodes#heartbeat'
     get 'status/:address', to: 'nodes#status'
     get 'status', to: 'nodes#index'

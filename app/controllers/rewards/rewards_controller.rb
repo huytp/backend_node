@@ -1,5 +1,7 @@
 module Rewards
   class RewardsController < ApplicationController
+    skip_before_action :authenticate_user
+
     # GET /rewards/epoch/:id
     def epoch
       epoch = Epoch.find_by(epoch_id: params[:id])

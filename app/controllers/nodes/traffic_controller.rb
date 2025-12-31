@@ -1,5 +1,6 @@
 module Nodes
   class TrafficController < ApplicationController
+    skip_before_action :authenticate_user
     # POST /nodes/traffic
     # Node gửi traffic record lên backend
     def create

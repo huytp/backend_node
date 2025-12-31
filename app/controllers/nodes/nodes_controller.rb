@@ -1,5 +1,7 @@
 module Nodes
   class NodesController < ApplicationController
+    skip_before_action :authenticate_user
+
     # POST /nodes/heartbeat
     def heartbeat
       node_address = params[:node]

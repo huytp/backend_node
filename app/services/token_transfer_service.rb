@@ -23,10 +23,18 @@ class TokenTransferService
 
   # Transfer tokens from reward wallet to node
   # @param node_address [String] Address of the node to receive tokens
-  # @param amount [Integer] Amount in wei (with 18 decimals), or [Float] amount in DEVPN tokens
+  # @param amount [Integer, Float] Amount in DEVPN tokens (will be converted to wei)
   def transfer_to_node(node_address, amount)
-    # Convert amount to wei if it's a float (assumes it's in DEVPN tokens)
-    amount_wei = amount.is_a?(Float) ? (amount * 10**TOKEN_DECIMALS).to_i : amount.to_i
+    # Convert amount to wei (always treat input as DEVPN tokens, not wei)
+    # If amount is very large (> 10^15), assume it's already in wei
+    if amount.to_i > 10**15
+      # Already in wei format
+      amount_wei = amount.to_i
+      Rails.logger.warn("⚠️  Large amount detected, treating as wei: #{amount_wei}")
+    else
+      # Treat as DEVPN tokens and convert to wei
+      amount_wei = (amount.to_f * 10**TOKEN_DECIMALS).to_i
+    end
 
     Rails.logger.info("=" * 60)
     Rails.logger.info("💸 Transferring DEVPN Tokens")

@@ -51,6 +51,9 @@ class SettlementService
         node_address = node.is_a?(Node) ? node.address : node
         amount = reward_data[:reward_amount]
 
+        # Skip if amount is 0
+        next if amount == 0 || amount.nil?
+
         # Create reward record
         reward = Reward.create!(
           node: node,

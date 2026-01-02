@@ -31,20 +31,6 @@ class SettlementService
       # Initialize token transfer service
       transfer_service = TokenTransferService.new
 
-      # Check reward wallet balance
-      reward_balance = transfer_service.get_reward_wallet_balance
-      total_rewards = rewards_data.sum { |r| r[:reward_amount] }
-
-      Rails.logger.info("Reward wallet balance: #{reward_balance / 10**18.0} DEVPN")
-      Rails.logger.info("Total rewards to distribute: #{total_rewards / 10**18.0} DEVPN")
-
-      if reward_balance < total_rewards
-        Rails.logger.error("Insufficient balance in reward wallet!")
-        Rails.logger.error("Need: #{total_rewards / 10**18.0} DEVPN, Have: #{reward_balance / 10**18.0} DEVPN")
-        epoch.update!(status: :pending)
-        return false
-      end
-
       # Process each reward
       rewards_data.each do |reward_data|
         node = reward_data[:node]

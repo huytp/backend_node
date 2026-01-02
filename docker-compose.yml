@@ -9,7 +9,7 @@ services:
       - .env
     environment:
       - RAILS_ENV=development
-      - AI_ROUTING_URL=http://34.55.194.244:8000
+      - AI_ROUTING_URL=http://136.116.33.98:8000
       - REDIS_URL=redis://redis:6379/0
       - POSTGRES_HOST=db
       - POSTGRES_USER=postgres
